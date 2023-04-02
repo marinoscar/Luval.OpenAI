@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Luval.OpenAI.Chat
 {
-    public class ChatRequest : BaseModelRequest
+    public class ChatRequest : TextModelRequestBase
     {
         public ChatRequest() : this(Model.GPTTurbo)
         {
@@ -20,6 +20,18 @@ namespace Luval.OpenAI.Chat
 
         [JsonProperty("messages")]
         public IList<ChatMessageRequest> Messages { get; set; }
+
+        [JsonProperty("presence_penalty")]
+        public double? PresencePenalty { get; set; }
+
+        [JsonProperty("frequency_penalty")]
+        public double? FrequencyPenalty { get; set; }
+
+        [JsonProperty("user")]
+        public string? User { get; set; }
+
+
+
 
     }
 
