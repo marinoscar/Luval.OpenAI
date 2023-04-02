@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.OpenAI", "Luval.OpenAI.csproj", "{2C0B2891-51CC-4760-A1E2-3BFEBB8DEBDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.OpenAI.UnitTest", "..\Luval.OpenAI.UnitTest\Luval.OpenAI.UnitTest.csproj", "{901F73C2-ECB0-496E-B92F-A05862141BBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C0B2891-51CC-4760-A1E2-3BFEBB8DEBDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C0B2891-51CC-4760-A1E2-3BFEBB8DEBDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C0B2891-51CC-4760-A1E2-3BFEBB8DEBDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C0B2891-51CC-4760-A1E2-3BFEBB8DEBDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{901F73C2-ECB0-496E-B92F-A05862141BBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{901F73C2-ECB0-496E-B92F-A05862141BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{901F73C2-ECB0-496E-B92F-A05862141BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{901F73C2-ECB0-496E-B92F-A05862141BBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD3E0EC9-AE2A-4A8B-825D-97255062985F}
+	EndGlobalSection
+EndGlobal
