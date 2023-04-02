@@ -18,7 +18,7 @@ namespace Luval.OpenAI.Completion
         public IList<CompletionChoice> Choices { get; set; }
 
         [JsonIgnore]
-        CompletionChoice Choice => Choices.FirstOrDefault();
+        public CompletionChoice Choice => Choices.FirstOrDefault();
 
         public override string ToString()
         {

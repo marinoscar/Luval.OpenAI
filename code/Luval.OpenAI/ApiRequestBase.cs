@@ -25,63 +25,135 @@ namespace Luval.OpenAI
         protected virtual ApiAuthentication Authentication { get; private set; }
         protected virtual string Endpoint { get; private set; }
 
-        protected virtual void WithClient(Action<HttpClient, HttpRequestMessage> runClient, object? payload, HttpMethod method = null)
+        protected virtual ApiRequest CreateApiRequest(object? payload, HttpMethod method = null)
         {
-            using (var client = new HttpClient())
+            var client = new HttpClient();
+            var key = Authentication.GetKey();
+            if (method == null) method = HttpMethod.Get;
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key);
+            client.DefaultRequestHeaders.Add("api-key", key);
+            client.DefaultRequestHeaders.Add("User-Agent", "Luval-OpenAI");
+
+            var request = new HttpRequestMessage(method, Endpoint);
+
+            if (!string.IsNullOrEmpty(Authentication.Organization))
+                client.DefaultRequestHeaders.Add("OpenAI-Organization", Authentication.Organization);
+
+            if (payload != null)
             {
-                var key = Authentication.GetKey();
-                if (method == null) method = HttpMethod.Get;
-
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key);
-                client.DefaultRequestHeaders.Add("api-key", key);
-                client.DefaultRequestHeaders.Add("User-Agent", "Luval-OpenAI");
-
-                var request = new HttpRequestMessage(method, Endpoint);
-
-                if (!string.IsNullOrEmpty(Authentication.Organization))
-                    client.DefaultRequestHeaders.Add("OpenAI-Organization", Authentication.Organization);
-
-                if (payload != null)
+                if (payload is HttpContent) request.Content = payload as HttpContent;
+                else
                 {
-                    if (payload is HttpContent) request.Content = payload as HttpContent;
-                    else
-                    {
-                        var jsonPayload = JsonConvert.SerializeObject(payload, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
-                        request.Content = new StringContent(jsonPayload, UnicodeEncoding.UTF8, "application/json"); ;
-                    }
+                    var jsonPayload = JsonConvert.SerializeObject(payload, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
+                    request.Content = new StringContent(jsonPayload, UnicodeEncoding.UTF8, "application/json");
                 }
-                runClient(client, request);
             }
+            return new ApiRequest() { Client = client, Request = request };
         }
-
-        protected virtual void WithPostClient(Action<HttpClient, HttpRequestMessage> runClient, object? payload)
+        protected virtual ApiRequest CreatePostApiRequest(object? payload)
         {
-            WithClient(runClient, payload, HttpMethod.Post);
+            return CreateApiRequest(payload, HttpMethod.Post);
         }
 
-        protected virtual async Task<T> SendRequestAsync<T>(Action<HttpClient, HttpRequestMessage> runClient, object? payload, HttpMethod method = null) where T : BaseModelResponse
+        protected virtual ApiRequest CreateGetApiRequest(object? payload)
+        {
+            return CreateApiRequest(payload, HttpMethod.Get);
+        }
+
+        protected virtual async Task<T> SendRequestAsync<T>(object? payload, HttpMethod method = null) where T : BaseModelResponse
         {
             var result = default(T);
-            WithClient(async (c, req) =>
+            using (var req = CreateApiRequest(payload, method))
             {
-
-                var response = await c.SendAsync(req, HttpCompletionOption.ResponseContentRead);
+                var response = await SendClientRequest(req.Client, req.Request, HttpCompletionOption.ResponseContentRead);
                 ValidateResponse(response);
-                var content = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<T>(content);
-
-            }, payload, method);
+                result = ParseResponse<T>(response);
+            }
             return result;
         }
 
-        protected virtual Task<T> PostRequestAsync<T>(Action<HttpClient, HttpRequestMessage> runClient, object? payload) where T : BaseModelResponse
+        protected virtual Task<HttpResponseMessage> SendClientRequest(HttpClient client, HttpRequestMessage requestMessage, HttpCompletionOption option)
         {
-            return SendRequestAsync<T>(runClient, payload, HttpMethod.Post);
+            return client.SendAsync(requestMessage, option);
         }
 
-        protected virtual Task<T> GetRequestAsync<T>(Action<HttpClient, HttpRequestMessage> runClient, object? payload) where T : BaseModelResponse
+        protected virtual Task<Stream> OpenResponseStream(HttpContent content)
         {
-            return SendRequestAsync<T>(runClient, payload, HttpMethod.Get);
+            return content.ReadAsStreamAsync();
+        }
+
+        protected virtual Task<string?> OpenLineStream(StreamReader reader)
+        {
+            return reader.ReadLineAsync();
+        }
+
+        protected virtual async IAsyncEnumerable<T> StreamRequestAsync<T>(object? payload, HttpMethod method = null) where T : BaseModelResponse
+        {
+            using (var req = CreateApiRequest(payload, method))
+            {
+                var response = await SendClientRequest(req.Client, req.Request, HttpCompletionOption.ResponseHeadersRead);
+                var contentResult = new StringWriter();
+                using (var stream = await OpenResponseStream(response.Content))
+                using (var reader = new StreamReader(stream))
+                {
+                    string line;
+                    while ((line = await OpenLineStream(reader)) != null)
+                    {
+                        contentResult.WriteLine(line);
+
+                        if (line.StartsWith("data:"))
+                            line = line.Substring("data:".Length);
+
+                        line = line.TrimStart();
+
+                        if (line == "[DONE]")
+                        {
+                            yield break;
+                        }
+                        else if (line.StartsWith(":"))
+                        { }
+                        else if (!string.IsNullOrWhiteSpace(line))
+                        {
+                            var res = JsonConvert.DeserializeObject<T>(line);
+
+                            res.ResponseData = ApiResponseData.TryToLoad(response);
+
+                            yield return res;
+                        }
+                    }
+                }
+            }
+        }
+
+        protected virtual IAsyncEnumerable<T> PostStreamRequestAsync<T>(object? payload) where T : BaseModelResponse
+        {
+            return StreamRequestAsync<T>(payload, HttpMethod.Post);
+        }
+
+        protected virtual IAsyncEnumerable<T> GetStreamRequestAsync<T>(object? payload) where T : BaseModelResponse
+        {
+            return StreamRequestAsync<T>(payload, HttpMethod.Get);
+        }
+
+        protected virtual T ParseResponse<T>(HttpResponseMessage response) where T : BaseModelResponse
+        {
+            var sw = new StringWriter();
+            using (var reader = new StreamReader(response.Content.ReadAsStream()))
+            {
+                sw.Write(reader.ReadToEnd());
+            }
+            return JsonConvert.DeserializeObject<T>(sw.ToString());
+        }
+
+        protected virtual Task<T> PostRequestAsync<T>(object? payload) where T : BaseModelResponse
+        {
+            return SendRequestAsync<T>(payload, HttpMethod.Post);
+        }
+
+        protected virtual Task<T> GetRequestAsync<T>(object? payload) where T : BaseModelResponse
+        {
+            return SendRequestAsync<T>(payload, HttpMethod.Get);
         }
 
 

@@ -25,9 +25,11 @@ namespace Luval.OpenAI
         [JsonProperty("model")]
         public string Model { get; set; }
 
-
         [JsonProperty("usage")]
         public ModelUsage Usage { get; set; }
+
+        [JsonIgnore]
+        public ApiResponseData ResponseData { get; set; }
     }
 
     public class ModelUsage

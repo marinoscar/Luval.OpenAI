@@ -25,4 +25,10 @@
     <ProjectReference Include="..\Luval.OpenAI\Luval.OpenAI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="private.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -16,6 +16,7 @@ namespace Luval.OpenAI.Completion
 
         public CompletionRequest(Model model) : base(model)
         {
+            Temperature = 0.7d;
         }
 
         [JsonProperty("prompt")]
