@@ -10,7 +10,7 @@ namespace Luval.OpenAI.UnitTest
         public void It_Should_Do_A_Completion()
         {
             var api = new CompletionEndpoint(new ApiAuthentication(Util.Key));
-            var result = api.SendCompletionAsync(new CompletionRequest() { Prompt = "tell me a joke", MaxTokens = 1000 }).Result;
+            var result = api.SendAsync(new CompletionRequest() { Prompt = "tell me a joke", MaxTokens = 1000 }).Result;
         }
 
         [Fact]
@@ -21,7 +21,7 @@ namespace Luval.OpenAI.UnitTest
             var count = 1;
             var sw = new StringWriter();
             CompletionResponse last;
-            await foreach (var item in api.StreamCompletionAsync(req))
+            await foreach (var item in api.StreamAsync(req))
             {
                 sw.Write(item);
                 count++;
