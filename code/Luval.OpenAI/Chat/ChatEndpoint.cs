@@ -11,6 +11,17 @@ namespace Luval.OpenAI.Chat
     public class ChatEndpoint : BaseEndpoint<ChatRequest, ChatResponse>
     {
 
+        public static ChatEndpoint CreateAzure(ApiAuthentication authentication, string resourceName, string deploymentName = "gpt-35-turbo", string apiVersion = "2023-03-15-preview")
+        {
+            return new ChatEndpoint(authentication, string.Format("https://{0}.openai.azure.com/openai/deployments/{1}/chat/completions?api-version={2}",
+                resourceName, deploymentName, apiVersion));
+        }
+
+        public static ChatEndpoint CreateOpenAI(ApiAuthentication authentication, string endpoint = "https://api.openai.com/v1/chat/completions")
+        {
+            return new ChatEndpoint(authentication, endpoint);
+        }
+
         public ChatEndpoint(ApiAuthentication authentication) : base(authentication, "https://api.openai.com/v1/chat/completions")
         {
 

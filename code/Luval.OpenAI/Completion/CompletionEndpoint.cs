@@ -11,6 +11,17 @@ namespace Luval.OpenAI.Completion
     public class CompletionEndpoint : BaseEndpoint<CompletionRequest, CompletionResponse>
     {
 
+        public static CompletionEndpoint CreateAzure(ApiAuthentication authentication, string resourceName, string deploymentName = "text-davinci-003", string apiVersion = "2022-12-01")
+        {
+            return new CompletionEndpoint(authentication, string.Format("https://{0}.openai.azure.com/openai/deployments/{1}/completions?api-version={2}",
+                resourceName, deploymentName, apiVersion));
+        }
+
+        public static CompletionEndpoint CreateOpenAI(ApiAuthentication authentication, string endpoint = "https://api.openai.com/v1/completions")
+        {
+            return new CompletionEndpoint(authentication, endpoint);
+        }
+
         public CompletionEndpoint(ApiAuthentication authentication) : this(authentication, "https://api.openai.com/v1/completions")
         {
 
