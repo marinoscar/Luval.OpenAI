@@ -54,6 +54,11 @@ namespace Luval.OpenAI.Chat
             system.Content = message;
         }
 
+        public void ClearMessages()
+        {
+            ChatMessages.Clear();
+        }
+
         public void AddUserMessage(string message)
         {
             ChatMessages.Add(new ChatMessageRequest() { Role = "user", Content = message });
