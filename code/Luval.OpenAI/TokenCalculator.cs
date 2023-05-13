@@ -18,10 +18,10 @@ namespace Luval.OpenAI
         {
             if (string.IsNullOrEmpty(prompt)) throw new ArgumentNullException(nameof(prompt));
 
-            var tokens = (int)(prompt.Length / 2.9);
+            var tokens = (int)(prompt.Length / 2.5);
             if (tokens > modelMaxTokens) throw new ArgumentOutOfRangeException(nameof(prompt), "The prompt exceeds the max number of tokens allowed");
 
-            var maxTokens = (int)((modelMaxTokens - tokens) * 0.9);
+            var maxTokens = (int)((modelMaxTokens - tokens) * 0.99);
 
             return maxTokens;
         }
