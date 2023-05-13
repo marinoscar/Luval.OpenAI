@@ -93,6 +93,7 @@ namespace Luval.OpenAI
             using (var req = CreateApiRequest(payload, method))
             {
                 var response = await SendClientRequest(req.Client, req.Request, HttpCompletionOption.ResponseHeadersRead);
+                if (!response.IsSuccessStatusCode) throw new ApplicationException(string.Format("Invalid request: {0}", response.StatusCode));
                 var contentResult = new StringWriter();
                 using (var stream = await OpenResponseStream(response.Content))
                 using (var reader = new StreamReader(stream))
