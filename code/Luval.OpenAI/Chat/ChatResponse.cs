@@ -19,7 +19,7 @@ namespace Luval.OpenAI.Chat
         public IList<ChatChoice> Choices { get; set; }
 
         [JsonIgnore]
-        ChatChoice Choice => Choices.FirstOrDefault();
+        public ChatChoice Choice => Choices.FirstOrDefault();
 
         public override string ToString()
         {
