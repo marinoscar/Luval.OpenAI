@@ -16,7 +16,7 @@ namespace Luval.OpenAI
         public static int FromPrompt(string prompt, string modelName = "gpt-3.5-turbo")
         {
             if (string.IsNullOrEmpty(prompt)) throw new ArgumentNullException(nameof(prompt));
-            if(!ModelMaxTokens.Instance.ContainsKey(modelName)) throw new ArgumentException($"There is no max token specification for model {modelName}");
+            if (!ModelMaxTokens.Instance.ContainsKey(modelName)) throw new ArgumentException($"There is no max token specification for model {modelName}");
 
             var modelMaxTokens = ModelMaxTokens.Instance[modelName];
 
@@ -58,5 +58,6 @@ namespace Luval.OpenAI
             var enc = GptEncoding.GetEncodingForModel(modelName);
             return enc.Encode(text);
         }
+
     }
 }
