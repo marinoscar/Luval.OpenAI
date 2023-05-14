@@ -23,7 +23,7 @@ namespace Luval.OpenAI
             var tokens = TotalPromptTokens(prompt, modelName);
             if (tokens > modelMaxTokens) throw new ArgumentOutOfRangeException(nameof(prompt), "The prompt exceeds the max number of tokens allowed");
 
-            var maxTokens = (int)((modelMaxTokens - tokens) * 0.99);
+            var maxTokens = (modelMaxTokens - tokens);
 
             return maxTokens;
         }
