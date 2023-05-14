@@ -172,6 +172,11 @@ namespace Luval.OpenAI
             {
                 throw new HttpRequestException("Endpoint had an internal server error");
             }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var error = response.Content.ReadAsStringAsync().Result;
+                throw new HttpRequestException($"Badd request {response.ReasonPhrase}", new HttpRequestException(error));
+            }
             else
             {
                 throw new HttpRequestException("Failed to complete the request");

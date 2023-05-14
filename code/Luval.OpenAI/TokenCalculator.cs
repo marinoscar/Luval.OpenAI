@@ -13,8 +13,9 @@ namespace Luval.OpenAI
     public static class TokenCalculator
     {
 
-        public static int FromPrompt(string prompt, string modelName = "gpt-3.5-turbo")
+        public static int FromPrompt(string prompt, string modelName = "gpt-3.5-turbo", double coverage = 0.98)
         {
+            if (coverage > 1 || coverage < 0.75d) throw new ArgumentOutOfRangeException(nameof(coverage), "The coverage indicates how much of the total tokes will be used, the value has to be between 0.75 and 1");
             if (string.IsNullOrEmpty(prompt)) throw new ArgumentNullException(nameof(prompt));
             if (!ModelMaxTokens.Instance.ContainsKey(modelName)) throw new ArgumentException($"There is no max token specification for model {modelName}");
 
@@ -23,7 +24,7 @@ namespace Luval.OpenAI
             var tokens = TotalPromptTokens(prompt, modelName);
             if (tokens > modelMaxTokens) throw new ArgumentOutOfRangeException(nameof(prompt), "The prompt exceeds the max number of tokens allowed");
 
-            var maxTokens = (modelMaxTokens - tokens);
+            var maxTokens = Convert.ToInt32((modelMaxTokens - tokens) * coverage);
 
             return maxTokens;
         }
@@ -55,7 +56,10 @@ namespace Luval.OpenAI
 
         public static List<int> GetTokens(string text, string modelName)
         {
-            var enc = GptEncoding.GetEncodingForModel(modelName);
+            var actualModel = modelName;
+            //checks for the 32k model that is not mapped in the nuget package
+            if (actualModel.ToLowerInvariant().StartsWith("gpt-4")) actualModel = "gpt-4";
+            var enc = GptEncoding.GetEncodingForModel(actualModel);
             return enc.Encode(text);
         }
 

@@ -69,7 +69,7 @@ namespace Luval.OpenAI.Chat
             ChatMessages.Add(new ChatMessageRequest() { Role = "assistant", Content = message });
         }
 
-        public Task<ChatResponse> SendAsync(int maxTokens, Model model, double temperature = 0.7d)
+        public Task<ChatResponse> SendAsync(Model model, int maxTokens, double temperature = 0.7d)
         {
             return SendAsync(CreateRequest(maxTokens, model, false, temperature));
         }
@@ -77,6 +77,11 @@ namespace Luval.OpenAI.Chat
         public Task<ChatResponse> SendAsync(int maxTokens, double temperature = 0.7d)
         {
             return SendAsync(CreateRequest(maxTokens, Model.GPTTurbo, false, temperature));
+        }
+
+        public Task<ChatResponse> SendAsync(Model model, double temperature = 0.7d)
+        {
+            return SendAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages, model.Id), model, false, temperature));
         }
 
         public Task<ChatResponse> SendAsync(double temperature = 0.7d)
