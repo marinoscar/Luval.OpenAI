@@ -81,7 +81,7 @@ namespace Luval.OpenAI.Chat
 
         public Task<ChatResponse> SendAsync(double temperature = 0.7d)
         {
-            return SendAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages), Model.GPTTurbo, false, temperature));
+            return SendAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages, Model.GPTTurbo.Id), Model.GPTTurbo, false, temperature));
         }
 
         public override Task<ChatResponse> SendAsync(ChatRequest request)
@@ -92,7 +92,7 @@ namespace Luval.OpenAI.Chat
 
         public IAsyncEnumerable<ChatResponse> StreamAsync(double temperature = 0.7d)
         {
-            return StreamAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages), Model.GPTTurbo, true, temperature));
+            return StreamAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages, Model.GPTTurbo.Id), Model.GPTTurbo, true, temperature));
         }
 
         public IAsyncEnumerable<ChatResponse> StreamAsync(int maxTokens, double temperature = 0.7d)

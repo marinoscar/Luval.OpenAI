@@ -43,7 +43,7 @@ namespace Luval.OpenAI.Completion
 
         public Task<CompletionResponse> SendAsync(string prompt, double temperature = 0.7d)
         {
-            return SendAsync(CreateRequest(prompt, TokenCalculator.FromPrompt(prompt), Model.TextDavinci003, false, temperature));
+            return SendAsync(CreateRequest(prompt, TokenCalculator.FromPrompt(prompt, Model.TextDavinci003.Id), Model.TextDavinci003, false, temperature));
         }
 
         public IAsyncEnumerable<CompletionResponse> StreamAsync(string prompt, int maxTokens, Model model, double temperature = 0.7d)
@@ -58,7 +58,7 @@ namespace Luval.OpenAI.Completion
 
         public IAsyncEnumerable<CompletionResponse> StreamAsync(string prompt, double temperature = 0.7d)
         {
-            return StreamAsync(CreateRequest(prompt, TokenCalculator.FromPrompt(prompt), Model.TextDavinci003, true, temperature));
+            return StreamAsync(CreateRequest(prompt, TokenCalculator.FromPrompt(prompt, Model.TextDavinci003.Id), Model.TextDavinci003, true, temperature));
         }
 
         public override IAsyncEnumerable<CompletionResponse> StreamAsync(CompletionRequest request)
