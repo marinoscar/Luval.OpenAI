@@ -11,6 +11,12 @@ namespace Luval.OpenAI.Chat
     public class ChatEndpoint : BaseEndpoint<ChatRequest, ChatResponse>
     {
 
+        public static ChatEndpoint CreateAzure(ApiAuthentication authentication, string resourceName, Model model, string deploymentName = "gpt-35-turbo", string apiVersion = "2023-03-15-preview")
+        {
+            return new ChatEndpoint(authentication, string.Format("https://{0}.openai.azure.com/openai/deployments/{1}/chat/completions?api-version={2}",
+                resourceName, deploymentName, apiVersion), model);
+        }
+
         public static ChatEndpoint CreateAzure(ApiAuthentication authentication, string resourceName, string deploymentName = "gpt-35-turbo", string apiVersion = "2023-03-15-preview")
         {
             return new ChatEndpoint(authentication, string.Format("https://{0}.openai.azure.com/openai/deployments/{1}/chat/completions?api-version={2}",
@@ -22,14 +28,24 @@ namespace Luval.OpenAI.Chat
             return new ChatEndpoint(authentication, endpoint);
         }
 
-        public ChatEndpoint(ApiAuthentication authentication) : base(authentication, "https://api.openai.com/v1/chat/completions")
+        public static ChatEndpoint CreateOpenAI(ApiAuthentication authentication, Model model, string endpoint = "https://api.openai.com/v1/chat/completions")
+        {
+            return new ChatEndpoint(authentication, endpoint, model);
+        }
+
+        public ChatEndpoint(ApiAuthentication authentication) : this(authentication, "https://api.openai.com/v1/chat/completions", Model.GPTTurbo)
         {
 
         }
 
-        public ChatEndpoint(ApiAuthentication authentication, string endpoint) : base(authentication, endpoint)
+        public ChatEndpoint(ApiAuthentication authentication, string endpoint) : this(authentication, endpoint, Model.GPTTurbo)
+        {
+        }
+
+        public ChatEndpoint(ApiAuthentication authentication, string endpoint, Model model) : base(authentication, endpoint)
         {
             SetSystemMessage("You are a helpful assistant.");
+            Model = model;
         }
 
         private List<ChatMessageRequest> _chatRequests;
@@ -42,6 +58,8 @@ namespace Luval.OpenAI.Chat
                 return _chatRequests;
             }
         }
+
+        public virtual Model Model { get; set; }
 
         public void SetSystemMessage(string message)
         {
@@ -86,7 +104,7 @@ namespace Luval.OpenAI.Chat
 
         public Task<ChatResponse> SendAsync(double temperature = 0.7d)
         {
-            return SendAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages, Model.GPTTurbo.Id), Model.GPTTurbo, false, temperature));
+            return SendAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages, Model.Id), Model, false, temperature));
         }
 
         public override Task<ChatResponse> SendAsync(ChatRequest request)
@@ -97,7 +115,7 @@ namespace Luval.OpenAI.Chat
 
         public IAsyncEnumerable<ChatResponse> StreamAsync(double temperature = 0.7d)
         {
-            return StreamAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages, Model.GPTTurbo.Id), Model.GPTTurbo, true, temperature));
+            return StreamAsync(CreateRequest(TokenCalculator.FromChat(ChatMessages, Model.Id), Model, true, temperature));
         }
 
         public IAsyncEnumerable<ChatResponse> StreamAsync(int maxTokens, double temperature = 0.7d)

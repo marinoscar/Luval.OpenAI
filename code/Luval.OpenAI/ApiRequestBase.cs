@@ -175,7 +175,12 @@ namespace Luval.OpenAI
             else if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 var error = response.Content.ReadAsStringAsync().Result;
-                throw new HttpRequestException($"Badd request {response.ReasonPhrase}", new HttpRequestException(error));
+                throw new HttpRequestException($"Bad request {response.ReasonPhrase}", new HttpRequestException(error));
+            }
+            else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                var error = response.Content.ReadAsStringAsync().Result;
+                throw new HttpRequestException($"Too many requests request {response.ReasonPhrase}", new HttpRequestException(error));
             }
             else
             {

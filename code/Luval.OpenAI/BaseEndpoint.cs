@@ -1,4 +1,5 @@
 ﻿using Luval.OpenAI.Completion;
+using Luval.OpenAI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,6 @@ namespace Luval.OpenAI
     {
         protected BaseEndpoint(ApiAuthentication authentication, string endpoint) : base(authentication, endpoint)
         {
-            
         }
 
         public virtual Task<TResponse> SendAsync(TRequest request)
