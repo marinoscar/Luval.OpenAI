@@ -4,7 +4,26 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Luval Open AI</Title>
+    <ApplicationIcon>luval-128x128.ico</ApplicationIcon>
+    <Authors>Oscar Marin</Authors>
+    <PackageProjectUrl>https://github.com/marinoscar/Luval.OpenAI</PackageProjectUrl>
+    <PackageIcon>LV-Luval-Logo-200x200.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="luval-128x128.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\img\LV-Luval-Logo-200x200.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
