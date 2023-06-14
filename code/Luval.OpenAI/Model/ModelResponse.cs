@@ -100,6 +100,14 @@ namespace Luval.OpenAI.Models
             Root = "gpt-3.5-turbo"
         };
 
+        public static Model GPTTurbo16k => new Model("gpt-3.5-turbo-16k-0613")
+        {
+            OwnedBy = "openai",
+            Object = "model",
+            CreatedUnixTime = 1685474247,
+            Root = "gpt-3.5-turbo-16k-0613"
+        };
+
         public static Model Gpt4 => new Model("gpt-4")
         {
             OwnedBy = "openai",
@@ -175,6 +183,7 @@ namespace Luval.OpenAI.Models
                                                                 {"gpt-4-32k-0314", 32768},
                                                                 {"gpt-3.5-turbo", 4096},
                                                                 {"gpt-3.5-turbo-0301", 4096},
+                                                                {"gpt-3.5-turbo-16k-0613", 16384},
                                                                 {"text-davinci-003", 4097},
                                                                 {"text-davinci-002", 4097},
                                                                 {"code-davinci-002", 8001},

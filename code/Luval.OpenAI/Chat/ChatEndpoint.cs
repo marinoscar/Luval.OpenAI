@@ -33,12 +33,12 @@ namespace Luval.OpenAI.Chat
             return new ChatEndpoint(authentication, endpoint, model);
         }
 
-        public ChatEndpoint(ApiAuthentication authentication) : this(authentication, "https://api.openai.com/v1/chat/completions", Model.GPTTurbo)
+        public ChatEndpoint(ApiAuthentication authentication) : this(authentication, "https://api.openai.com/v1/chat/completions", Model.GPTTurbo16k)
         {
 
         }
 
-        public ChatEndpoint(ApiAuthentication authentication, string endpoint) : this(authentication, endpoint, Model.GPTTurbo)
+        public ChatEndpoint(ApiAuthentication authentication, string endpoint) : this(authentication, endpoint, Model.GPTTurbo16k)
         {
         }
 
