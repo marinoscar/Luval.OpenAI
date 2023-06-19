@@ -59,6 +59,10 @@ namespace Luval.OpenAI
             var actualModel = modelName;
             //checks for the 32k model that is not mapped in the nuget package
             if (actualModel.ToLowerInvariant().StartsWith("gpt-4")) actualModel = "gpt-4";
+
+            //checks for the model gpt-3.5-turbo-16k-0613 and makes sure it supports the legacy turbo
+            if (actualModel.ToLowerInvariant().Equals("gpt-3.5-turbo-16k-0613")) actualModel = "gpt-3.5-turbo";
+
             var enc = GptEncoding.GetEncodingForModel(actualModel);
             return enc.Encode(text);
         }
