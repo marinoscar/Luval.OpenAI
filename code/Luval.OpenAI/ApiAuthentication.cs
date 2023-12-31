@@ -16,6 +16,16 @@ namespace Luval.OpenAI
 
         }
 
+        public ApiAuthentication(string key) : this(new NetworkCredential("", key).SecurePassword, null)
+        {
+            
+        }
+
+        public ApiAuthentication(string key, string organization) : this(new NetworkCredential("", key).SecurePassword, organization)
+        {
+            
+        }
+
         public ApiAuthentication(SecureString key, string organization)
         {
             Key = key;

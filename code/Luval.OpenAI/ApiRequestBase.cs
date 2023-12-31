@@ -63,12 +63,19 @@ namespace Luval.OpenAI
 
         protected virtual async Task<T> SendRequestAsync<T>(object? payload, HttpMethod method = null) where T : BaseModelResponse
         {
-            var result = default(T);
+            var response = await SendRequestAsync(payload, method);
+            T? result = ParseResponse<T>(response);
+            return result;
+        }
+
+        protected virtual async Task<HttpResponseMessage> SendRequestAsync(object? payload, HttpMethod method = null)
+        {
+            var result = default(HttpResponseMessage);
             using (var req = CreateApiRequest(payload, method))
             {
                 var response = await SendClientRequest(req.Client, req.Request, HttpCompletionOption.ResponseContentRead);
                 ValidateResponse(response);
-                result = ParseResponse<T>(response);
+                result = response;
             }
             return result;
         }
@@ -150,6 +157,11 @@ namespace Luval.OpenAI
         protected virtual Task<T> PostRequestAsync<T>(object? payload) where T : BaseModelResponse
         {
             return SendRequestAsync<T>(payload, HttpMethod.Post);
+        }
+
+        protected virtual Task<HttpResponseMessage> PostRequestAsync(object? payload)
+        {
+            return SendRequestAsync(payload, HttpMethod.Post);
         }
 
         protected virtual Task<T> GetRequestAsync<T>(object? payload) where T : BaseModelResponse
